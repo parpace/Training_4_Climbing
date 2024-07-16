@@ -22,6 +22,50 @@ const getUserById = async (req, res) => {
     }
 }
 
+const getPlannedWorkouts = async (req, res) => {
+  try {
+    const userId = req.params.userId
+    const user = await User.findById(userId).populate('plannedWorkouts.workoutId')
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    const plannedWorkouts = user.plannedWorkouts.map((plannedWorkout) => ({
+      ...plannedWorkout.workoutId._doc,
+      date: plannedWorkout.date,
+      notes: plannedWorkout.notes
+    }))
+    
+    res.status(200).json(plannedWorkouts)
+  } catch (error) {
+    console.error('Error fetching planned workouts:', error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
+const getLoggedWorkouts = async (req, res) => {
+  try {
+    const userId = req.params.userId
+    const user = await User.findById(userId).populate('loggedWorkouts.workoutId')
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    const loggedWorkouts = user.loggedWorkouts.map((loggedWorkout) => ({
+      ...loggedWorkout.workoutId._doc,
+      date: loggedWorkout.date,
+      notes: loggedWorkout.notes
+    }))
+    
+    res.status(200).json(loggedWorkouts)
+  } catch (error) {
+    console.error('Error fetching logged workouts:', error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
 const addPlannedWorkout = async (req, res) => {
     const { userId } = req.params
     const { workoutId, date, fields, notes } = req.body
@@ -95,8 +139,10 @@ const addLoggedWorkout = async (req, res) => {
 }
 
 module.exports = {
-    getAllUsers,
-    getUserById,
-    addPlannedWorkout,
-    addLoggedWorkout
+  getAllUsers,
+  getUserById,
+  addPlannedWorkout,
+  addLoggedWorkout,
+  getPlannedWorkouts,
+  getLoggedWorkouts
 }

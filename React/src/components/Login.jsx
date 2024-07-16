@@ -18,8 +18,12 @@ export default function Login () {
   useEffect(() => {
     if (loggedInUser) {
       const redirectToUserProfile = async (user) => {
-      const userResponse = await axios.get(`http://localhost:3001/users/${user}`)
-      navigate(`/username/${userResponse.data.username}`)
+        try {
+          const userResponse = await axios.get(`http://localhost:3001/users/${user}`)
+          navigate(`/username/${userResponse.data.username}`)
+        } catch (error) {
+          console.error('Error fetching user data:', error)
+        }
       }
       redirectToUserProfile(loggedInUser)
     }
@@ -28,20 +32,20 @@ export default function Login () {
       try {
         const response = await axios.get(`http://localhost:3001/users`)
         setUsers(response.data)
-        // console.log(response.data)
+        console.log(response.data)
       } catch (error) {
         console.error('user does not exixt', error)
       }
     }
     getUsers()
-  }, [])
+  }, [loggedInUser, navigate])
 
-  const getUserId = async (username) => {
+  const getUserId = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:3001/users/username/${username}`)
+      const response = await axios.get(`http://localhost:3001/users/${userId}`)
       
-      localStorage.setItem('loggedInUser', response.data._id)
-      navigate(`/username/${username}`)
+      localStorage.setItem('loggedInUser', userId)
+      navigate(`/username/${response.username}`)
     } catch (error) {
       console.error("Error fetching data:", error)
     }
@@ -66,7 +70,7 @@ export default function Login () {
       })
       return
     }
-    getUserId(formState.username)
+    getUserId(user._id)
   }
   const handleChange = (e) => {
     setFormState({...formState,
@@ -83,8 +87,6 @@ export default function Login () {
       </div>
 
       <form className="loginContainer" onSubmit={handleSubmit}>
-        <h3>Log in</h3>
-
         <div className="usernameLogin">
         <input type="text" id="username" placeholder="User Name" onChange={handleChange} value={formState.username} />
         </div>

@@ -1,4 +1,5 @@
-// import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Calendar from './Calendar'
 import Header from './Header'
 import Metrics from './Metrics'
@@ -6,7 +7,22 @@ import Metrics from './Metrics'
 
 export default function UserHome () {
     const loggedInUser = localStorage.getItem('loggedInUser')
-    // const [plannedWorkouts, setPlannedWorkouts] = useState([])
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!loggedInUser) { navigate(`/`) }
+    }, [loggedInUser, navigate])
+    
+    return (
+        <>
+            <Header loggedInUser={loggedInUser}/>
+            <Calendar loggedInUser={loggedInUser}/>
+            <Metrics loggedInUser={loggedInUser}/>
+        </>
+    )
+}
+
+// const [plannedWorkouts, setPlannedWorkouts] = useState([])
     // const [loggedWorkouts, setLoggedWorkouts] = useState([])
 
     // useEffect(() => {
@@ -32,12 +48,3 @@ export default function UserHome () {
     //     }
     //     fetchWorkouts()
     // }, [])
-    
-    return (
-        <>
-            <Header loggedInUser={loggedInUser}/>
-            <Calendar loggedInUser={loggedInUser}/>
-            <Metrics loggedInUser={loggedInUser}/>
-        </>
-    )
-}

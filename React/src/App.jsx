@@ -4,14 +4,13 @@ import Login from './components/Login'
 // import SignUp from './components/SignUp'
 import UserHome from './components/UserHome'
 
-function App() {
-
+function App () {
   return (
     <>
       <Routes>
         <Route path='/' element={<Login/>}/>
         {/* <Route path='/signup' element={<SignUp/>}/> */}
-        <Route path='/:username' element={<UserHome/>}/>
+        <Route path='/username/:username' element={<UserHome/>}/>
       </Routes>
     </>
   )
